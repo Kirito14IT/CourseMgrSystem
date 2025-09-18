@@ -1,12 +1,16 @@
+//utils.c
 #include "utils.h"
 #include "bplus_tree.h"  // 添加这行
 int login() {
     int id;
     char password[20];
 
-    printf("=== 课程管理系统登录 ===\n");
     printf("请输入用户ID: ");
-    scanf("%d", &id);
+    if (scanf("%d", &id) != 1) {
+        clearInputBuffer();
+        printf("*** 错误: 请输入有效的数字ID ***\n");
+        return -1;
+    }
     clearInputBuffer();
 
     printf("请输入密码: ");
@@ -17,7 +21,7 @@ int login() {
     if (id >= 0 && id <= 99) {
         for (int i = 0; i < adminCount; i++) {
             if (adminArray[i].adminId == id && strcmp(adminArray[i].password, password) == 0) {
-                printf("管理员登录成功！欢迎，%s\n", adminArray[i].name);
+                printf("\n>> 管理员登录成功！欢迎您，%s <<\n", adminArray[i].name);
                 return id;
             }
         }
@@ -26,7 +30,7 @@ int login() {
     else if (id >= 100 && id <= 999) {
         for (int i = 0; i < teacherCount; i++) {
             if (teacherArray[i].teacherId == id && strcmp(teacherArray[i].password, password) == 0) {
-                printf("教师登录成功！欢迎，%s\n", teacherArray[i].name);
+                printf("\n>> 教师登录成功！欢迎您，%s <<\n", teacherArray[i].name);
                 return id;
             }
         }
@@ -35,12 +39,12 @@ int login() {
     else if (id >= 1000) {
         Student* student = searchStudentById(id);
         if (student != NULL && strcmp(student->password, password) == 0) {
-            printf("学生登录成功！欢迎，%s\n", student->name);
+            printf("\n>> 学生登录成功！欢迎您，%s <<\n", student->name);
             return id;
         }
     }
 
-    printf("登录失败！用户ID或密码错误。\n");
+    printf("\n*** 登录失败！用户ID或密码错误 ***\n");
     return -1;
 }
 

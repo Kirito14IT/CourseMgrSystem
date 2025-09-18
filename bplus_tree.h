@@ -1,8 +1,9 @@
+//bplus_tree.h
 #pragma once
 
 #include "data_structures.h"
 
-#define BPLUS_TREE_ORDER 4
+#define BPLUS_TREE_ORDER 3 // B+树关键字的个数，阶数为最大关键字个数加1
 
 // B+树操作函数声明
 BPlusTreeNode* createBPlusTreeNode(bool isLeaf);
@@ -19,3 +20,5 @@ Course* searchCourseById(int courseId);
 // 调试函数声明（可选）
 void printBPlusTree(BPlusTreeNode* root, int level);
 int getBPlusTreeHeight(BPlusTreeNode* root);
+
+

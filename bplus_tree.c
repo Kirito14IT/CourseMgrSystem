@@ -1,3 +1,4 @@
+//bplus_tree.c
 #include "bplus_tree.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,13 +31,21 @@ BPlusTreeNode* createBPlusTreeNode(bool isLeaf) {
 }
 
 // 查找合适的子节点位置
+// 临时修复版本 - 适应现有B+树结构
 int findChildIndex(BPlusTreeNode* node, int key) {
     int i = 0;
     while (i < node->keyCount && key > node->keys[i]) {
         i++;
     }
+
+    // 特殊处理：如果key等于某个内部键，应该到包含该键的子树
+    if (i < node->keyCount && key == node->keys[i]) {
+        return i + 1;  // 向右偏移一位
+    }
+
     return i;
 }
+
 
 // 分裂内部节点
 BPlusTreeNode* splitInternalNode(BPlusTreeNode* node, int* midKey) {
@@ -187,7 +196,7 @@ BPlusTreeNode* insertRecursive(BPlusTreeNode* node, int key, void* data, int* pr
 //    return root;
 //}
 
-// B+树插入 - 添加数据验证
+ //B+树插入 - 添加数据验证
 BPlusTreeNode* insertBPlusTree(BPlusTreeNode* root, int key, void* data) {
     if (data == NULL) {
         printf("错误：尝试插入空数据指针\n");
@@ -349,20 +358,25 @@ void traverseBPlusTree(BPlusTreeNode* root, void (*visit)(void* data)) {
 // 销毁B+树
 void destroyBPlusTree(BPlusTreeNode* root) {
     if (root == NULL) {
+        printf("尝试释放空节点\n");
         return;
     }
+    printf("释放节点: %p, 键数: %d, 是否叶子: %d\n",
+        root, root->keyCount, root->isLeaf);
 
     if (!root->isLeaf) {
         for (int i = 0; i <= root->keyCount; i++) {
             destroyBPlusTree(root->children[i]);
         }
-        free(root->children);
+        if(root->children!=NULL)free(root->children);
     }
 
-    free(root->keys);
-    free(root->data);
-    free(root);
+    //if(root->keys!=NULL)free(root->keys);
+    //if (root->data != NULL)free(root->data);
+    if (root != NULL)free(root);
 }
+
+
 
 // 便捷查找函数实现
 Student* searchStudentById(int studentId) {
